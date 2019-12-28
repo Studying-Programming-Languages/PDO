@@ -12,10 +12,10 @@ use App\PDO\Repository\Person\PersonRepository;
 $mysql = new MySQL();
 $pgsql = new Postgres();
 
-$pessoa = new PersonEntity('Andre Ferreira', 34, 'andre.ferreira@soluti.com.br');
+$pessoa = new PersonEntity('Estêvão Souza Rezende', 2, 'estevao.rezende@soluti.com.br');
 
 $pessoas = new PersonRepository();
-$pessoas->setConnection($pgsql);
+$pessoas->setConnection($mysql);
 
 if ($pessoas->setPerson($pessoa)) {
     print("Pessoa cadastrada com sucesso") . PHP_EOL;

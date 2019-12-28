@@ -21,7 +21,7 @@ class PersonRepository
 
     public function getPessoas()
     {
-        $query = "SELECT id, nome, age, email FROM pessoas";
+        $query = "SELECT nome, age, email FROM pessoas";
         $conn = self::getConnection();
         $result = $conn->query($query);
         $people = $result->fetchAll();
@@ -34,19 +34,29 @@ class PersonRepository
             $query = "INSERT INTO 
                         pessoas (nome, age, email) 
                     VALUES 
-                        ('{$person->getName()}', {$person->getAge()}, '{$person->getEmail()}')";
+                        (:nome, :age, :email)";
             $conn = self::getConnection();
-            $conn->exec($query);
+            $result = $conn->prepare($query);
+            $result->execute([
+                    ':nome' => "{$person->getName()}",
+                    ':age' => "{$person->getAge()}",
+                    ':email' => "{$person->getEmail()}"
+                ]);
             return true;
         }
         return false;
     }
 
     private function getPersonByEmail(string $email) {
-        $query = "SELECT email FROM pessoas WHERE email = '{$email}'";
+        $query = "SELECT email FROM pessoas WHERE email = :email";
         $conn = self::getConnection();
-        $result = $conn->query($query);
-        $pessoa = $result->fetch();
+        $result = $conn->prepare($query);
+        $result->execute(
+            [
+                ':email' => "{$email}"
+            ]
+        );
+        $pessoa = $result->fetch(\PDO::FETCH_ASSOC);
         if ($pessoa['email'] === $email) {
             return true;
         }
